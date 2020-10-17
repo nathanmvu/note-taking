@@ -29,17 +29,17 @@ app.get("/api/notes/:id", function(req, res) {
   res.json(savedNotes[Number(req.params.id)]);
 });
 
+// To save notes to db.json
 app.post('/api/notes', function(req, res) {
   let savedNotes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
   let noteEntry = req.body;
+  // ID for note based on length of notes in database array
   let newId = savedNotes.length;
   noteEntry.id = newId;
-
-  console.log('Note ID is: ' + noteEntry.id);
-
+  // Adding new note to savedNotes
   savedNotes.push(noteEntry);
 
-  updateDb(savedNotes);
+  fs.writeFileSync('./db/db.json', JSON.stringify(savedNotes));
   res.json(noteEntry);
 });
 
@@ -47,8 +47,10 @@ app.delete("/api/notes/:id", function(req, res) {
   let savedNotes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
   let noteID = req.params.id;
   let newID = 0;
+  // Deleting note based on ID
   savedNotes.splice(noteID, 1);
 
+  // resetting note IDs by order
   for (note of savedNotes) {
     note.id = newID;
     newID++;
@@ -57,11 +59,6 @@ app.delete("/api/notes/:id", function(req, res) {
   fs.writeFileSync('./db/db.json', JSON.stringify(savedNotes));
   res.json(noteID);
 })
-
-updateDb = (savedNotes) => {
-  console.log('updated db');
-  fs.writeFileSync('./db/db.json', JSON.stringify(savedNotes));
-}
 
 // Start the server on the port
 app.listen(PORT, function() {
