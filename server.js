@@ -26,7 +26,7 @@ app.get('/api/notes', function(req, res) {
 // Getting notes by ID
 app.get("/api/notes/:id", function(req, res) {
   let savedNotes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
-  res.json(savedNotes[Number(req.params.id)]);
+  res.json(savedNotes[req.params.id]);
 });
 
 // To save notes to db.json
@@ -34,7 +34,7 @@ app.post('/api/notes', function(req, res) {
   let savedNotes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
   let noteEntry = req.body;
   // ID for note based on length of notes in database array
-  let newId = savedNotes.length;
+  let newId = savedNotes.length.toString();
   noteEntry.id = newId;
   // Adding new note to savedNotes
   savedNotes.push(noteEntry);
@@ -52,7 +52,7 @@ app.delete("/api/notes/:id", function(req, res) {
 
   // resetting note IDs by order
   for (note of savedNotes) {
-    note.id = newID;
+    note.id = newID.toString();
     newID++;
   }
   
